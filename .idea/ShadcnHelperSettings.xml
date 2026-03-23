@@ -1986,6 +1986,18 @@
         <option name="homepage" value="https://rescript-shadcn.miriad.studio" />
         <option name="urlTemplate" value="https://rescript-shadcn.miriad.studio/r/{name}.json" />
       </RegistryConfigState>
+      <RegistryConfigState>
+        <option name="id" value="central-ramonclaudio-coderabbit" />
+        <option name="name" value="Ramonclaudio-coderabbit" />
+        <option name="namespace" value="@ramonclaudio-coderabbit" />
+        <option name="baseUrl" value="https://coderabbit-shadcn-registry.vercel.app/r" />
+        <option name="stylePath" value="/{name}.json" />
+        <option name="type" value="community" />
+        <option name="enabled" value="false" />
+        <option name="description" value="A framework-agnostic API client, pluggable storage adapters (LocalStorage, Convex, Supabase, PostgreSQL, MySQL), and React components for generating developer activity reports." />
+        <option name="homepage" value="https://ramonclaudio.com/registries/coderabbit" />
+        <option name="urlTemplate" value="https://coderabbit-shadcn-registry.vercel.app/r/{name}.json" />
+      </RegistryConfigState>
     </registryConfigs>
   </component>
 </project>
