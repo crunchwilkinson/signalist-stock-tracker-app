@@ -25,7 +25,7 @@ const UserDropDown = () => {
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center gap-3 text-gray-4 hover:text-yellow-500">
                     <Avatar className="h-8 w-8">
-                        <AvatarImage src="https://github.com/shadcn.png" alt="Avatar Image"/>
+                        <AvatarImage src="https://static.vecteezy.com/system/resources/previews/017/425/372/non_2x/t-letter-business-logo-template-initial-t-logo-design-for-real-estate-financial-marketing-management-construction-etc-free-vector.jpg" alt="Avatar Image"/>
                         <AvatarFallback className="bg-yellow-500 text-yellow-900 text-sm font-bold">
                             {user.name[0]}
                         </AvatarFallback>
@@ -41,7 +41,7 @@ const UserDropDown = () => {
                 <DropdownMenuLabel>
                     <div className="flex relative items-center gap-3 py-2">
                         <Avatar className="h-10 w-10">
-                            <AvatarImage src="https://github.com/shadcn.png" alt="Avatar Image"/>
+                            <AvatarImage src="https://static.vecteezy.com/system/resources/previews/017/425/372/non_2x/t-letter-business-logo-template-initial-t-logo-design-for-real-estate-financial-marketing-management-construction-etc-free-vector.jpg" alt="Avatar Image"/>
                             <AvatarFallback className="bg-yellow-500 text-yellow-900 text-sm font-bold">
                                 {user.name[0]}
                             </AvatarFallback>
