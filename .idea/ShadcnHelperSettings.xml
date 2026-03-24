@@ -1998,6 +1998,18 @@
         <option name="homepage" value="https://ramonclaudio.com/registries/coderabbit" />
         <option name="urlTemplate" value="https://coderabbit-shadcn-registry.vercel.app/r/{name}.json" />
       </RegistryConfigState>
+      <RegistryConfigState>
+        <option name="id" value="central-shadcncraft" />
+        <option name="name" value="Shadcncraft" />
+        <option name="namespace" value="@shadcncraft" />
+        <option name="baseUrl" value="https://shadcncraft.com/r" />
+        <option name="stylePath" value="/{name}.json" />
+        <option name="type" value="community" />
+        <option name="enabled" value="false" />
+        <option name="description" value="A starter collection of polished shadcn/ui components and blocks built to production standards. Part of a larger Figma + React system designed to scale with your product." />
+        <option name="homepage" value="https://shadcncraft.com" />
+        <option name="urlTemplate" value="https://shadcncraft.com/r/{name}.json" />
+      </RegistryConfigState>
     </registryConfigs>
   </component>
 </project>
