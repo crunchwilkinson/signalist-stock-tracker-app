@@ -9,7 +9,6 @@ import FooterLink from "@/components/forms/FooterLink";
 import {useRouter} from "next/navigation";
 import {signUpWithEmail} from "@/lib/actions/auth.actions";
 import {toast} from "sonner";
-import {error} from "better-auth/api";
 
 
 const SignUp = () => {
@@ -35,7 +34,13 @@ const SignUp = () => {
     const onSubmit = async (data: SignUpFormData) => {
         try {
             const result = await signUpWithEmail(data);
-            if (result.success) router.push('/');
+            if (result.success) {
+                router.push('/');
+            } else {
+                toast.error('Sign up failed.', {
+                    description: result.error || 'An unexpected error occurred.',
+                })
+            }
         } catch (e) {
             console.error(e);
             toast.error('Sign up failed.', {
@@ -55,7 +60,13 @@ const SignUp = () => {
                     placeholder="John Doe"
                     register={register}
                     error={errors.fullName}
-                    validation={{ required: 'Full name is required', minLength: 2 }}
+                    validation={{
+                        required: 'Full name is required',
+                        minLength: {
+                            value: 2,
+                            message: 'Full name must be at least 2 characters'
+                        }
+                    }}
                 />
                 <InputField
                     name="email"
@@ -63,7 +74,13 @@ const SignUp = () => {
                     placeholder="example@gmail.com"
                     register={register}
                     error={errors.email}
-                    validation={{ required: 'Email is required', pattern: /^\w+@\w+\.\w+$/, message: 'Invalid email address' }}
+                    validation={{
+                        required: 'Email is required',
+                        pattern: {
+                            value: /^\w+@\w+\.\w+$/,
+                            message: 'Invalid email address'
+                        }
+                    }}
                 />
                 <InputField
                     name="password"
@@ -72,7 +89,13 @@ const SignUp = () => {
                     type="password"
                     register={register}
                     error={errors.password}
-                    validation={{ required: 'Password is required', minLength: 8 }}
+                    validation={{
+                        required: 'Password is required',
+                        minLength: {
+                            value: 8,
+                            message: 'Password must be at least 8 characters'
+                        }
+                    }}
                 />
                 <SelectField
                     name = "investmentGoals"
