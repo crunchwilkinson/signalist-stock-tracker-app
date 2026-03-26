@@ -12,7 +12,7 @@ export default function SearchCommand({ renderAs = 'button', label = 'Add stock'
     const [open, setOpen] = useState(false)
     const [searchTerm, setSearchTerm] = useState("")
     const [loading, setLoading] = useState(false)
-    const [stocks, setStocks] = useState<StockWithWatchlistStatus[]>(initialStocks);
+    const [stocks, setStocks] = useState<Stock[]>(initialStocks);
 
     const isSearchMode = !!searchTerm.trim();
     const displayStocks = isSearchMode ? stocks : stocks?.slice(0, 10);
