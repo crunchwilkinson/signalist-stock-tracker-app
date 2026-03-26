@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📈 Signalist - AI-Powered Stock Market Tracker
 
-## Getting Started
+![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
 
-First, run the development server:
+**Signalist** is a modern, full-stack Next.js web application designed to give retail investors a professional-grade dashboard. It combines real-time financial data, advanced charting, and AI-driven background workflows to deliver highly personalized daily stock market summaries directly to users' inboxes.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## ✨ Key Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+* **🤖 AI-Generated Daily Summaries:** Leverages **Google Gemini 2.5 Flash Lite** to synthesize raw market news into personalized, easily digestible email digests based on a user's specific watchlist and investment goals.
+* **⏱️ Robust Background Workflows:** Utilizes **Inngest** for reliable, serverless background job orchestration. Handles asynchronous tasks like welcome emails and scheduled cron jobs (daily news delivery) without blocking the main application thread.
+* **📊 Advanced Financial Charting:** Integrates **TradingView** lightweight widgets to provide interactive candlestick charts, market heatmaps, and deep technical analysis for individual stocks.
+* **⚡ Real-Time Stock Search:** Features a lightning-fast, debounced command-palette search built with shadcn/ui, pulling live ticker data via the **Finnhub API**.
+* **🔐 Secure Authentication:** End-to-end user authentication and session management powered by **Better Auth** and securely stored in **MongoDB**.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Frontend:**
+* [Next.js 16](https://nextjs.org/) (App Router, Server Actions)
+* [React](https://react.dev/) & [TypeScript](https://www.typescriptlang.org/)
+* [Tailwind CSS](https://tailwindcss.com/) & [shadcn/ui](https://ui.shadcn.com/) (Styling & Components)
+* React Hook Form (Client-side validation)
 
-## Learn More
+**Backend & Data:**
+* [MongoDB](https://www.mongodb.com/) & Mongoose (Database & ORM)
+* [Better Auth](https://better-auth.com/) (Authentication)
+* [Inngest](https://www.inngest.com/) (Background Jobs & Cron Scheduling)
+* Nodemailer (Email Delivery)
 
-To learn more about Next.js, take a look at the following resources:
+**APIs & AI:**
+* [Google Gemini API](https://ai.google.dev/) (LLM for text summarization)
+* [Finnhub API](https://finnhub.io/) (Real-time stock quotes and market news)
+* TradingView Widgets (Embedded financial charts)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🚀 Getting Started
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+To run this project locally, you will need to configure the following environment variables in a `.env` file:
 
-## Deploy on Vercel
+```env
+# Database
+MONGODB_URI=your_mongodb_connection_string
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Authentication
+BETTER_AUTH_SECRET=your_generated_secret
+BETTER_AUTH_BASE_URL=http://localhost:3000 # Update for production
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# APIs & AI
+NEXT_PUBLIC_FINNHUB_API_KEY=your_finnhub_key
+GEMINI_API_KEY=your_google_ai_key
+
+# Email Delivery
+NODEMAILER_EMAIL=your_gmail_address
+NODEMAILER_PASSWORD=your_16_char_google_app_password
+
+# Local Development Only
+INNGEST_DEV=1
