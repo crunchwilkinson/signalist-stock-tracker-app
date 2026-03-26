@@ -25,12 +25,14 @@ const useTradingViewWidget = (scriptUrl: string, config: Record<string, unknown>
             containerRef.current.appendChild(script);
             containerRef.current.dataset.loaded = 'true';
 
+            const currentContainer = containerRef.current;
+
             // THE CLEANUP FUNCTION: This runs when the component is removed from the screen.
             // It prevents memory leaks and overlapping charts if the user navigates away.
             return () => {
-                if (containerRef.current) {
-                    containerRef.current.innerHTML = '';
-                    delete containerRef.current.dataset.loaded;
+                if (currentContainer) {
+                    currentContainer.innerHTML = '';
+                    delete currentContainer.dataset.loaded;
                 }
             }
             // The dependency array: If any of these 3 variables change, React will re-run this useEffect block.
