@@ -49,6 +49,7 @@ const SignIn = () => {
                     name="email"
                     label="Email"
                     placeholder="example@gmail.com"
+                    type="email"
                     register={register}
                     error={errors.email}
                     validation={{
