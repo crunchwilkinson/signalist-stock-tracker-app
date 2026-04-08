@@ -1,9 +1,6 @@
 "use client";
-import React, { useMemo, useState } from "react";
-
-// Minimal WatchlistButton implementation to satisfy page requirements.
-// This component focuses on UI contract only. It toggles local state and
-// calls onWatchlistChange if provided. Styling hooks match globals.css.
+import React, { useMemo, useState, useTransition } from "react";
+import {toggleWatchlist} from "@/lib/actions/watchlist.actions";
 
 const WatchlistButton = ({
                              symbol,
@@ -14,6 +11,7 @@ const WatchlistButton = ({
                              onWatchlistChange,
                          }: WatchlistButtonProps) => {
     const [added, setAdded] = useState<boolean>(!!isInWatchlist);
+    const [isPending, startTransition] = useTransition();
 
     const label = useMemo(() => {
         if (type === "icon") return added ? "" : "";
@@ -21,9 +19,22 @@ const WatchlistButton = ({
     }, [added, type]);
 
     const handleClick = () => {
-        const next = !added;
-        setAdded(next);
-        onWatchlistChange?.(symbol, next);
+        // 1. Optimistically update the UI instantly
+        const nextState = !added;
+        setAdded(nextState);
+        onWatchlistChange?.(symbol, nextState);
+
+        // 2. Send the request to your database in the background
+        startTransition(async () => {
+            const result = await toggleWatchlist(symbol, company);
+
+            // 3. If the database update fails, revert the button back to its original state
+            if (!result.success) {
+                setAdded(!nextState);
+                onWatchlistChange?.(symbol, !nextState);
+                // Optional: Show a toast error message here so the user knows it failed
+            }
+        });
     };
 
     if (type === "icon") {
