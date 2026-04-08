@@ -1,6 +1,5 @@
 "use client";
-import React, { useMemo, useState, useTransition } from "react";
-import {toggleWatchlist} from "@/lib/actions/watchlist.actions";
+import React, { useMemo, useState } from "react";
 
 const WatchlistButton = ({
                              symbol,
@@ -11,30 +10,50 @@ const WatchlistButton = ({
                              onWatchlistChange,
                          }: WatchlistButtonProps) => {
     const [added, setAdded] = useState<boolean>(!!isInWatchlist);
-    const [isPending, startTransition] = useTransition();
+    const [isPending, setIsPending] = useState(false);
 
     const label = useMemo(() => {
         if (type === "icon") return added ? "" : "";
         return added ? "Remove from Watchlist" : "Add to Watchlist";
     }, [added, type]);
 
-    const handleClick = () => {
-        // 1. Optimistically update the UI instantly
+    const handleClick = async () => {
+        // Prevent spam-clicking while a request is already in flight
+        if (isPending) return;
+
+        // 1. Optimistic UI Update: Instantly flip the state so it feels fast
         const nextState = !added;
         setAdded(nextState);
         onWatchlistChange?.(symbol, nextState);
 
-        // 2. Send the request to your database in the background
-        startTransition(async () => {
-            const result = await toggleWatchlist(symbol, company);
+        // Lock the button
+        setIsPending(true);
 
-            // 3. If the database update fails, revert the button back to its original state
+        try {
+            // 2. The API Call: Send the POST request to our new route
+            const res = await fetch('/api/watchlist', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ symbol, company }),
+            });
+            const result = await res.json();
+
+            // 3. Error Handling: If the database failed to update, silently revert
+            // the button back to its original state.
             if (!result.success) {
                 setAdded(!nextState);
                 onWatchlistChange?.(symbol, !nextState);
-                // Optional: Show a toast error message here so the user knows it failed
+                console.error("Failed to update watchlist");
             }
-        });
+        } catch (error) {
+            // Revert on network errors (e.g., user loses internet connection)
+            setAdded(!nextState);
+            onWatchlistChange?.(symbol, !nextState);
+            console.error("Network error toggling watchlist", error);
+        } finally {
+            // Unlock the button so the user can click it again
+            setIsPending(false);
+        }
     };
 
     if (type === "icon") {
@@ -44,6 +63,7 @@ const WatchlistButton = ({
                 aria-label={added ? `Remove ${symbol} from watchlist` : `Add ${symbol} to watchlist`}
                 className={`watchlist-icon-btn ${added ? "watchlist-icon-added" : ""}`}
                 onClick={handleClick}
+                disabled={isPending}
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -64,7 +84,7 @@ const WatchlistButton = ({
     }
 
     return (
-        <button className={`watchlist-btn ${added ? "watchlist-remove" : ""}`} onClick={handleClick}>
+        <button className={`watchlist-btn ${added ? "watchlist-remove" : ""}`} onClick={handleClick} disabled={isPending}>
             {showTrashIcon && added ? (
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
