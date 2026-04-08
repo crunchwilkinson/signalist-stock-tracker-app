@@ -7,10 +7,31 @@ import {
     COMPANY_PROFILE_WIDGET_CONFIG,
     COMPANY_FINANCIALS_WIDGET_CONFIG,
 } from "@/lib/constants";
+import WatchlistButton from "@/components/WatchListButton";
+import {auth} from "@/lib/better-auth/auth";
+import {headers} from "next/headers";
+import {connectToDatabase} from "@/database/mongoose";
+import {Watchlist} from "@/database/models/watchlist.model";
 
 export default async function StockDetails({ params }: StockDetailsPageProps) {
     const { symbol } = await params;
     const scriptUrl = `https://s3.tradingview.com/external-embedding/embed-widget-`;
+
+    // 1. Get the current user session
+    const session = await auth.api.getSession({
+        headers: await headers()
+    });
+
+    // 2. Query the database to see if this user saved this symbol
+    let isSaved = false;
+    if (session?.user) {
+        await connectToDatabase()
+        const existing = await Watchlist.findOne({
+            userId: session.user.id,
+            symbol: symbol.toUpperCase()
+        });
+        isSaved = !!existing; // Convert to boolean
+    }
 
     return (
         <div className="flex min-h-screen p-4 md:p-6 lg:p-8">
@@ -40,6 +61,10 @@ export default async function StockDetails({ params }: StockDetailsPageProps) {
 
                 {/* Right column */}
                 <div className="flex flex-col gap-6">
+                    <div className="flex items-center justify-between">
+                        {/* Pass the dynamic boolean to the button */}
+                        <WatchlistButton symbol={symbol.toUpperCase()} company={symbol.toUpperCase()} isInWatchlist={isSaved} type="button" />
+                    </div>
                     <TradingViewWidget
                         scriptUrl={`${scriptUrl}technical-analysis.js`}
                         config={TECHNICAL_ANALYSIS_WIDGET_CONFIG(symbol)}
