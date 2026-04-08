@@ -32,9 +32,6 @@ export async function toggleWatchlist(symbol: string, company: string) {
             await Watchlist.create({ userId, symbol, company });
         }
 
-        // 4. Tell Next.js to re-fetch the data for this page
-        revalidatePath(`/stocks/${symbol}`);
-
         return {success: true};
     } catch (error) {
         console.error('Error toggling watchlist:', error);
