@@ -22,6 +22,11 @@ export interface FinnhubQuote {
     pc: number; // Previous close price
 }
 
+export interface FinnhubMetric {
+    marketCapitalization?: number;
+    peTTM?: number;
+}
+
 async function fetchJSON<T>(url: string, revalidateSeconds?: number): Promise<T> {
     const options: RequestInit & { next?: { revalidate?: number } } = revalidateSeconds
         ? { cache: 'force-cache', next: { revalidate: revalidateSeconds } }
@@ -147,4 +152,26 @@ export const getQuotesForSymbols = async (symbols: string[]) => {
     );
 
     return quotes;
+};
+
+export const getMetricsForSymbols = async (symbols: string[]) => {
+    const token = process.env.FINNHUB_API_KEY ?? process.env.NEXT_PUBLIC_FINNHUB_API_KEY;
+    if (!token || symbols.length === 0) return {};
+
+    const metrics: Record<string, FinnhubMetric> = {};
+
+    await Promise.all(
+        symbols.map(async (sym) => {
+            try {
+                const url = `${FINNHUB_BASE_URL}/stock/metric?symbol=${encodeURIComponent(sym)}&metric=all&token=${token}`;
+                // Cache for 1 hour
+                const data = await fetchJSON<{ metric: FinnhubMetric }>(url, 3600);
+                metrics[sym] = data.metric || {};
+            } catch (e) {
+                console.error(`Error fetching metrics for ${sym}`, e);
+            }
+        })
+    );
+
+    return metrics;
 };

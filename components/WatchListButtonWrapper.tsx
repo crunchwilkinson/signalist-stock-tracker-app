@@ -7,9 +7,10 @@ type Props = {
     symbol: string;
     company: string;
     type?: 'button' | 'icon';
+    onWatchlistChange?: (symbol: string, isAdded: boolean) => void;
 };
 
-const WatchlistButtonWrapper = ({ symbol, company, type = 'button' }: Props) => {
+const WatchlistButtonWrapper = ({ symbol, company, type = 'button', onWatchlistChange }: Props) => {
     const [isInWatchlist, setIsInWatchlist] = useState(false);
 
     // Start with a loading state so we don't accidentally flash the wrong button text
@@ -58,7 +59,12 @@ const WatchlistButtonWrapper = ({ symbol, company, type = 'button' }: Props) => 
             company={company}
             isInWatchlist={isInWatchlist} // Pass down the fetched true/false value
             type={type} // Pass down the button type
-            onWatchlistChange={(_, isAdded) => setIsInWatchlist(isAdded)}
+            onWatchlistChange={(_, isAdded) => {
+                setIsInWatchlist(isAdded);
+                if (onWatchlistChange) {
+                    onWatchlistChange(symbol, isAdded); // Fire the parent's function if it exists
+                }
+            }}
         />
     );
 };
