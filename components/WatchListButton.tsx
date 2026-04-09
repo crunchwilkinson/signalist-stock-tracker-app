@@ -17,7 +17,11 @@ const WatchlistButton = ({
         return added ? "Remove from Watchlist" : "Add to Watchlist";
     }, [added, type]);
 
-    const handleClick = async () => {
+    const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        // Prevent the button from triggering the <Link>
+        e.stopPropagation();
+
         // Prevent spam-clicking while a request is already in flight
         if (isPending) return;
 
@@ -71,7 +75,7 @@ const WatchlistButton = ({
                     fill={added ? "#FACC15" : "none"}
                     stroke="#FACC15"
                     strokeWidth="1.5"
-                    className="watchlist-star"
+                    className="watchlist-icon"
                 >
                     <path
                         strokeLinecap="round"
