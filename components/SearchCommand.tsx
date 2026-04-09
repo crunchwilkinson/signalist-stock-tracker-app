@@ -29,6 +29,13 @@ export default function SearchCommand({ renderAs = 'button', label = 'Add stock'
         return () => window.removeEventListener("keydown", onKeyDown)
     }, [])
 
+    // Listen for custom trigger from other buttons
+    useEffect(() => {
+        const handleOpenSearch = () => setOpen(true);
+        window.addEventListener("open-search", handleOpenSearch);
+        return () => window.removeEventListener("open-search", handleOpenSearch);
+    }, []);
+
     const handleSearch = useCallback(async (query: string) => {
         const trimmed = query.trim();
         if(!trimmed) {
