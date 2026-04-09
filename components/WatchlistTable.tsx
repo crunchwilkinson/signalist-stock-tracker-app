@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Bell } from 'lucide-react';
 import WatchlistButtonWrapper from '@/components/WatchListButtonWrapper';
-import { useRouter } from 'next/navigation';
 import OpenSearchButton from '@/components/OpenSearchButton';
 
 // 1. Define strict TypeScript Interfaces to remove all 'any' types
@@ -40,7 +39,6 @@ const formatMarketCap = (value?: number) => {
 export default function WatchlistTable({ initialItems, liveQuotes, metrics }: WatchlistTableProps) {
     // 2. Type the React state correctly
     const [items, setItems] = useState<WatchlistItem[]>(initialItems);
-    const router = useRouter();
 
     useEffect(() => {
         setItems(initialItems);
@@ -50,7 +48,6 @@ export default function WatchlistTable({ initialItems, liveQuotes, metrics }: Wa
         if (!isAdded) {
             // TypeScript now knows 'prev' is an array of WatchlistItem objects
             setItems((prev) => prev.filter(item => item.symbol !== symbol));
-            router.refresh();
         }
     };
 

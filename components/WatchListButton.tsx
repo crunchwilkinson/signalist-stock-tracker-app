@@ -1,5 +1,6 @@
 "use client";
 import React, { useMemo, useState } from "react";
+import { useRouter } from "next/navigation"; // 1. Add this import
 
 const WatchlistButton = ({
                              symbol,
@@ -11,6 +12,7 @@ const WatchlistButton = ({
                          }: WatchlistButtonProps) => {
     const [added, setAdded] = useState<boolean>(!!isInWatchlist);
     const [isPending, setIsPending] = useState(false);
+    const router = useRouter(); // 2. Initialize router
 
     const label = useMemo(() => {
         if (type === "icon") return added ? "" : "";
@@ -19,22 +21,17 @@ const WatchlistButton = ({
 
     const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        // Prevent the button from triggering the <Link>
         e.stopPropagation();
 
-        // Prevent spam-clicking while a request is already in flight
         if (isPending) return;
 
-        // 1. Optimistic UI Update: Instantly flip the state so it feels fast
+        // Optimistically update the UI instantly
         const nextState = !added;
         setAdded(nextState);
         onWatchlistChange?.(symbol, nextState);
-
-        // Lock the button
         setIsPending(true);
 
         try {
-            // 2. The API Call: Send the POST request to our new route
             const res = await fetch('/api/watchlist', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -42,20 +39,19 @@ const WatchlistButton = ({
             });
             const result = await res.json();
 
-            // 3. Error Handling: If the database failed to update, silently revert
-            // the button back to its original state.
             if (!result.success) {
                 setAdded(!nextState);
                 onWatchlistChange?.(symbol, !nextState);
                 console.error("Failed to update watchlist");
+            } else {
+                // 3. THE FIX: Only refresh the page AFTER the DB update is 100% successful
+                router.refresh();
             }
         } catch (error) {
-            // Revert on network errors (e.g., user loses internet connection)
             setAdded(!nextState);
             onWatchlistChange?.(symbol, !nextState);
             console.error("Network error toggling watchlist", error);
         } finally {
-            // Unlock the button so the user can click it again
             setIsPending(false);
         }
     };
