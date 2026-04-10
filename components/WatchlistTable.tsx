@@ -4,9 +4,10 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Bell } from 'lucide-react';
 import WatchlistButtonWrapper from '@/components/WatchListButtonWrapper';
+import { useRouter } from 'next/navigation';
 import OpenSearchButton from '@/components/OpenSearchButton';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // 1. Import Avatar
 
-// 1. Define strict TypeScript Interfaces to remove all 'any' types
 interface WatchlistItem {
     symbol: string;
     company: string;
@@ -23,10 +24,19 @@ interface MetricData {
     peTTM?: number;
 }
 
+// 2. Add the ProfileData interface
+interface ProfileData {
+    logo?: string;
+    name?: string;
+    ticker?: string;
+    weburl?: string;
+}
+
 interface WatchlistTableProps {
     initialItems: WatchlistItem[];
     liveQuotes: Record<string, QuoteData>;
     metrics: Record<string, MetricData>;
+    profiles: Record<string, ProfileData>; // 3. Add profiles to the props interface
 }
 
 const formatMarketCap = (value?: number) => {
@@ -36,9 +46,9 @@ const formatMarketCap = (value?: number) => {
     return `$${value.toFixed(2)}M`;
 };
 
-export default function WatchlistTable({ initialItems, liveQuotes, metrics }: WatchlistTableProps) {
-    // 2. Type the React state correctly
+export default function WatchlistTable({ initialItems, liveQuotes, metrics, profiles }: WatchlistTableProps) {
     const [items, setItems] = useState<WatchlistItem[]>(initialItems);
+    const router = useRouter();
 
     useEffect(() => {
         setItems(initialItems);
@@ -46,8 +56,8 @@ export default function WatchlistTable({ initialItems, liveQuotes, metrics }: Wa
 
     const handleWatchlistChange = (symbol: string, isAdded: boolean) => {
         if (!isAdded) {
-            // TypeScript now knows 'prev' is an array of WatchlistItem objects
             setItems((prev) => prev.filter(item => item.symbol !== symbol));
+            router.refresh();
         }
     };
 
@@ -64,7 +74,6 @@ export default function WatchlistTable({ initialItems, liveQuotes, metrics }: Wa
 
     return (
         <div className="w-full overflow-x-auto pb-4">
-            {/* 3. Apply your custom table classes */}
             <table className="watchlist-table text-left">
                 <thead>
                 <tr className="table-header-row">
@@ -82,12 +91,13 @@ export default function WatchlistTable({ initialItems, liveQuotes, metrics }: Wa
                 {items.map((item) => {
                     const quote = liveQuotes[item.symbol];
                     const metric = metrics[item.symbol];
+                    const profile = profiles[item.symbol]; // 4. Grab the profile for this row
                     const isPositive = (quote?.d ?? 0) >= 0;
 
                     return (
                         <tr key={item.symbol} className="table-row group">
                             <td className="table-cell py-3 px-4 text-center">
-                                <div className="opacity-70 group-hover:opacity-100 transition-opacity">
+                                <div className="flex justify-center opacity-70 group-hover:opacity-100 transition-opacity [&_svg]:w-4 [&_svg]:h-4">
                                     <WatchlistButtonWrapper
                                         symbol={item.symbol}
                                         company={item.company}
@@ -96,9 +106,26 @@ export default function WatchlistTable({ initialItems, liveQuotes, metrics }: Wa
                                     />
                                 </div>
                             </td>
-                            <td className="table-cell py-3 px-4 text-gray-400 max-w-[200px] truncate">
-                                {item.company}
+
+                            {/* 5. Render the Avatar next to the Company Name */}
+                            <td className="table-cell py-3 px-4">
+                                <div className="flex items-center gap-3">
+                                    <Avatar className="h-7 w-7 bg-white rounded-full border border-gray-600 shadow-sm shrink-0 overflow-hidden">
+                                        <AvatarImage
+                                            src={profile?.logo}
+                                            alt={item.symbol}
+                                            className="object-contain"
+                                        />
+                                        <AvatarFallback className="bg-gray-700 text-[10px] font-bold text-gray-200">
+                                            {item.symbol.substring(0, 2)}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <span className="text-gray-400 max-w-[180px] truncate" title={item.company}>
+                                            {item.company}
+                                        </span>
+                                </div>
                             </td>
+
                             <td className="table-cell py-3 px-4">
                                 <Link href={`/stocks/${item.symbol}`} className="hover:text-yellow-400 transition-colors">
                                     {item.symbol}

@@ -3,8 +3,10 @@ import { auth } from '@/lib/better-auth/auth';
 import { headers } from 'next/headers';
 import { connectToDatabase } from '@/database/mongoose';
 import { Watchlist } from '@/database/models/watchlist.model';
-import { getQuotesForSymbols, getMetricsForSymbols } from '@/lib/actions/finhub.actions';
+// 1. Add getProfilesForSymbols to your import
+import { getQuotesForSymbols, getMetricsForSymbols, getProfilesForSymbols } from '@/lib/actions/finhub.actions';
 import OpenSearchButton from '@/components/OpenSearchButton';
+import { Plus } from 'lucide-react';
 import WatchlistTable from '@/components/WatchlistTable';
 
 export default async function WatchlistPage() {
@@ -23,18 +25,18 @@ export default async function WatchlistPage() {
         .sort({ addedAt: -1 })
         .lean();
 
-    // THE FIX: Strip out the MongoDB ObjectIds and Dates by mapping to a simple object
     const plainItems = savedItems.map(item => ({
         symbol: item.symbol,
         company: item.company
     }));
 
-    // We can extract symbols from our new clean array
     const symbols = plainItems.map(item => item.symbol);
 
-    const [liveQuotes, liveMetrics] = await Promise.all([
+    // 2. Add the profile fetcher to the Promise.all array
+    const [liveQuotes, liveMetrics, liveProfiles] = await Promise.all([
         getQuotesForSymbols(symbols),
-        getMetricsForSymbols(symbols)
+        getMetricsForSymbols(symbols),
+        getProfilesForSymbols(symbols)
     ]);
 
     return (
@@ -48,17 +50,17 @@ export default async function WatchlistPage() {
                 </div>
 
                 <OpenSearchButton className="flex items-center gap-2 bg-yellow-400 text-black px-4 py-2 rounded-md font-semibold hover:bg-yellow-500 transition-colors text-sm">
+                    <Plus className="w-4 h-4" />
                     Add stock
                 </OpenSearchButton>
             </div>
 
-            {/* Drop in the new clean Client Component */}
             <WatchlistTable
                 initialItems={plainItems}
                 liveQuotes={liveQuotes}
                 metrics={liveMetrics}
+                profiles={liveProfiles} // 3. Pass the new profiles object down
             />
-
         </div>
     );
 }
