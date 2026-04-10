@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Bell } from 'lucide-react';
-import WatchlistButtonWrapper from '@/components/WatchListButtonWrapper';
+import WatchListButton from '@/components/WatchListButton';
 import { useRouter } from 'next/navigation';
 import OpenSearchButton from '@/components/OpenSearchButton';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // 1. Import Avatar
@@ -98,9 +98,10 @@ export default function WatchlistTable({ initialItems, liveQuotes, metrics, prof
                         <tr key={item.symbol} className="table-row group">
                             <td className="table-cell py-3 px-4 text-center">
                                 <div className="flex justify-center opacity-70 group-hover:opacity-100 transition-opacity [&_svg]:w-4 [&_svg]:h-4">
-                                    <WatchlistButtonWrapper
+                                    <WatchListButton
                                         symbol={item.symbol}
                                         company={item.company}
+                                        isInWatchlist={true} // Hardcode to true because it's in the table!
                                         type="icon"
                                         onWatchlistChange={handleWatchlistChange}
                                     />
