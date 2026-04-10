@@ -45,12 +45,18 @@ export async function POST(request: NextRequest) {
     // Extract the JSON body sent from the frontend button click
     const { symbol, company } = await request.json();
 
-    if (!symbol || !company) {
-        return NextResponse.json({ success: false, error: 'Missing symbol or company' }, { status: 400 });
+    // Add strict type checking
+    if (!symbol || !company || typeof symbol !== 'string' || typeof company !== 'string') {
+        return NextResponse.json({
+            success: false,
+            error: 'Invalid symbol or company provided'
+        }, { status: 400 });
     }
 
     await connectToDatabase();
     const userId = session.user.id;
+
+    const MAX_WATCHLIST_SIZE = 15;
 
     // Check if the stock is already saved
     const existingEntry = await Watchlist.findOne({ userId, symbol: symbol.toUpperCase() });
@@ -59,6 +65,13 @@ export async function POST(request: NextRequest) {
     if (existingEntry) {
         await Watchlist.deleteOne({ _id: existingEntry._id });
     } else {
+        const currentCount = await Watchlist.countDocuments({ userId });
+        if (currentCount >= MAX_WATCHLIST_SIZE) {
+            return NextResponse.json({
+                success: false,
+                error: 'Watchlist limit reached. Please remove items to add more.'
+            }, { status: 403 });
+        }
         await Watchlist.create({ userId, symbol: symbol.toUpperCase(), company });
     }
 

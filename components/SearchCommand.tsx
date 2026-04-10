@@ -7,6 +7,7 @@ import {Loader2,  TrendingUp} from "lucide-react";
 import Link from "next/link";
 import {searchStocks} from "@/lib/actions/finhub.actions";
 import {useDebounce} from "@/hooks/useDebounce";
+import WatchlistButtonWrapper from "@/components/WatchListButtonWrapper";
 
 export default function SearchCommand({ renderAs = 'button', label = 'Add stock', initialStocks }: SearchCommandProps) {
     const [open, setOpen] = useState(false)
@@ -27,6 +28,13 @@ export default function SearchCommand({ renderAs = 'button', label = 'Add stock'
         window.addEventListener("keydown", onKeyDown)
         return () => window.removeEventListener("keydown", onKeyDown)
     }, [])
+
+    // Listen for custom trigger from other buttons
+    useEffect(() => {
+        const handleOpenSearch = () => setOpen(true);
+        window.addEventListener("open-search", handleOpenSearch);
+        return () => window.removeEventListener("open-search", handleOpenSearch);
+    }, []);
 
     const handleSearch = useCallback(async (query: string) => {
         const trimmed = query.trim();
@@ -110,7 +118,14 @@ export default function SearchCommand({ renderAs = 'button', label = 'Add stock'
                                                 {stock.symbol} | {stock.exchange } | {stock.type}
                                             </div>
                                         </div>
-                                        {/*<Star />*/}
+                                        <div className="ml-4">
+                                            <WatchlistButtonWrapper
+                                            symbol={stock.symbol}
+                                            company={stock.name}
+                                            type='icon'
+                                            />
+                                        </div>
+
                                     </Link>
                                 </li>
                             ))}
