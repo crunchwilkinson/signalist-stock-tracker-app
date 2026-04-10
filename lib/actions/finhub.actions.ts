@@ -7,9 +7,11 @@ const FINNHUB_BASE_URL = 'https://finnhub.io/api/v1';
 const NEXT_PUBLIC_FINNHUB_API_KEY = process.env.NEXT_PUBLIC_FINNHUB_API_KEY ?? '';
 
 interface FinnhubProfile {
+    logo?: string;
     name?: string;
     ticker?: string;
     exchange?: string;
+    weburl?: string;
 }
 
 export interface FinnhubQuote {
@@ -26,6 +28,7 @@ export interface FinnhubMetric {
     marketCapitalization?: number;
     peTTM?: number;
 }
+
 
 async function fetchJSON<T>(url: string, revalidateSeconds?: number): Promise<T> {
     const options: RequestInit & { next?: { revalidate?: number } } = revalidateSeconds
@@ -174,4 +177,26 @@ export const getMetricsForSymbols = async (symbols: string[]) => {
     );
 
     return metrics;
+};
+
+export const getProfilesForSymbols = async (symbols: string[]) => {
+    const token = process.env.FINNHUB_API_KEY ?? process.env.NEXT_PUBLIC_FINNHUB_API_KEY;
+    if (!token || symbols.length === 0) return {};
+
+    const profiles: Record<string, FinnhubProfile> = {};
+
+    await Promise.all(
+        symbols.map(async (sym) => {
+            try {
+                const url = `${FINNHUB_BASE_URL}/stock/profile2?symbol=${encodeURIComponent(sym)}&token=${token}`;
+                // Cache for 24 hours (86400 seconds)
+                const profile = await fetchJSON<FinnhubProfile>(url, 86400);
+                profiles[sym] = profile;
+            } catch (e) {
+                console.error(`Error fetching profile for ${sym}`, e);
+            }
+        })
+    );
+
+    return profiles;
 };

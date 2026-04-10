@@ -1,45 +1,29 @@
 import TradingViewWidget from "@/components/TradingViewWidget";
 import { HEATMAP_WIDGET_CONFIG, MARKET_OVERVIEW_WIDGET_CONFIG, TOP_STORIES_WIDGET_CONFIG } from "@/lib/constants";
+import HomeWatchlist from "@/components/HomeWatchlist";
 
-// Notice there is NO 'use client' here. This is a Server Component by default.
-// It acts as the structural blueprint, passing data down to the interactive client widgets.
 const Home = () => {
-    // The base URL for all the TradingView embed scripts
     const scriptUrl = `https://s3.tradingview.com/external-embedding/embed-widget-`;
 
     return (
-        <div className="flex min-h-screen home-wrapper">
-            {/* Top Row of widgets */}
-            <section className="grid w-full gap-8 home-section">
+        <div className="flex flex-col min-h-screen home-wrapper p-4 md:p-8 max-w-[1600px] mx-auto w-full gap-8">
 
-                {/* Tailwind Grid classes for responsiveness:
-                    On medium screens (md) it takes 1 column.
-                    On extra large screens (xl) it also takes 1 column.
-                */}
-                <div className="md:col-span-1 xl:col-span-1">
+            {/* Dashboard Layout: 1 Column on Mobile -> 3 Columns on Large Screens */}
+            <section className="grid grid-cols-1 xl:grid-cols-3 gap-8 w-full home-section">
+
+                {/* Left Column (1/3 width) */}
+                <div className="flex flex-col gap-8 xl:col-span-1">
                     <TradingViewWidget
                         title="Market Overview"
-                        scriptUrl={`${scriptUrl}market-overview.js`} // Appends the specific script name to the base URL
-                        config={MARKET_OVERVIEW_WIDGET_CONFIG} // Pulls the JSON settings from your constants file
+                        scriptUrl={`${scriptUrl}market-overview.js`}
+                        config={MARKET_OVERVIEW_WIDGET_CONFIG}
                         className="custom-chart"
                         height={600}
                     />
-                </div>
 
-                {/* On xl screens, this widget is wider, taking up 2 columns. */}
-                <div className="md:col-span-1 xl:col-span-2">
-                    <TradingViewWidget
-                        title="Stock Heatmap"
-                        scriptUrl={`${scriptUrl}stock-heatmap.js`}
-                        config={HEATMAP_WIDGET_CONFIG}
-                        height={600}
-                    />
-                </div>
-            </section>
+                    <HomeWatchlist />
 
-            {/* Bottom Row of widgets */}
-            <section className="grid w-full gap-8 home-section">
-                <div className="h-full md:col-span-1 xl:col-span-1">
+                    {/* Moved Top Stories right under the Watchlist */}
                     <TradingViewWidget
                         scriptUrl={`${scriptUrl}timeline.js`}
                         config={TOP_STORIES_WIDGET_CONFIG}
@@ -47,17 +31,29 @@ const Home = () => {
                         height={600}
                     />
                 </div>
-                <div className="h-full md:col-span-1 xl:col-span-2">
+
+                {/* Right Column (2/3 width) */}
+                <div className="flex flex-col gap-8 xl:col-span-2">
+                    <TradingViewWidget
+                        title="Stock Heatmap"
+                        scriptUrl={`${scriptUrl}stock-heatmap.js`}
+                        config={HEATMAP_WIDGET_CONFIG}
+                        height={600}
+                    />
+
+                    {/* Indices Table (Market Quotes) now drops directly under the heatmap
+                        and automatically takes up the exact same full 2/3 width! */}
                     <TradingViewWidget
                         scriptUrl={`${scriptUrl}market-quotes.js`}
                         config={MARKET_OVERVIEW_WIDGET_CONFIG}
+                        className="custom-chart"
                         height={600}
                     />
                 </div>
+
             </section>
         </div>
     )
 }
 
 export default Home;
-
