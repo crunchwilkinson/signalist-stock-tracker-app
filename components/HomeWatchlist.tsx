@@ -54,11 +54,11 @@ export default async function HomeWatchlist() {
                                 <div className="flex items-center gap-3">
 
                                     {/* The Logo Avatar */}
-                                    <Avatar className="h-9 w-9 bg-white rounded-full border border-gray-600 shadow-sm flex-shrink-0">
+                                    <Avatar className="h-9 w-9 bg-white rounded-full border border-gray-600 shadow-sm shrink-0">
                                         <AvatarImage
                                             src={profile?.logo}
                                             alt={item.symbol}
-                                            className="object-contain p-1.5" // p-1.5 gives the logo some breathing room inside the circle
+                                            className="object-contain w-full h-full"
                                         />
                                         <AvatarFallback className="bg-gray-700 text-xs font-bold text-gray-200">
                                             {item.symbol.substring(0, 2)}
