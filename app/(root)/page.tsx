@@ -6,7 +6,7 @@ const Home = () => {
     const scriptUrl = `https://s3.tradingview.com/external-embedding/embed-widget-`;
 
     return (
-        <div className="flex flex-col min-h-screen home-wrapper p-4 md:p-8 max-w-[1600px] mx-auto w-full gap-8">
+        <div className="flex flex-col min-h-screen home-wrapper p-4 md:p-8 max-w-400 mx-auto w-full gap-8">
 
             {/* Dashboard Layout: 1 Column on Mobile -> 3 Columns on Large Screens */}
             <section className="grid grid-cols-1 xl:grid-cols-3 gap-8 w-full home-section">

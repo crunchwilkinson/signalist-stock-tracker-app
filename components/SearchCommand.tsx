@@ -7,7 +7,7 @@ import {Loader2,  TrendingUp} from "lucide-react";
 import Link from "next/link";
 import {searchStocks} from "@/lib/actions/finhub.actions";
 import {useDebounce} from "@/hooks/useDebounce";
-import WatchlistButtonWrapper from "@/components/WatchListButtonWrapper";
+import WatchlistButton from "@/components/WatchlistButton";
 
 export default function SearchCommand({ renderAs = 'button', label = 'Add stock', initialStocks }: SearchCommandProps) {
     const [open, setOpen] = useState(false)
@@ -119,7 +119,7 @@ export default function SearchCommand({ renderAs = 'button', label = 'Add stock'
                                             </div>
                                         </div>
                                         <div className="ml-4">
-                                            <WatchlistButtonWrapper
+                                            <WatchlistButton
                                             symbol={stock.symbol}
                                             company={stock.name}
                                             type='icon'

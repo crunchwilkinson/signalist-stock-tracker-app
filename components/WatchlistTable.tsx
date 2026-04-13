@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Bell } from 'lucide-react';
-import WatchListButton from '@/components/WatchListButton';
+import WatchlistButton from '@/components/WatchlistButton';
 import OpenSearchButton from '@/components/OpenSearchButton';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -85,10 +85,10 @@ export default function WatchlistTable({ initialItems, liveQuotes, metrics, prof
                         <tr key={item.symbol} className="table-row group">
                             <td className="table-cell py-3 px-4 w-12 text-center">
                                 <div className="flex justify-center opacity-70 group-hover:opacity-100 transition-opacity [&_svg]:w-4 [&_svg]:h-4">
-                                    <WatchListButton
+                                    <WatchlistButton
                                         symbol={item.symbol}
                                         company={item.company}
-                                        isInWatchlist={true}
+                                        initialStatus={true}
                                         type="icon"
                                         // onWatchlistChange is completely removed!
                                     />
@@ -97,13 +97,13 @@ export default function WatchlistTable({ initialItems, liveQuotes, metrics, prof
 
                             <td className="table-cell py-3 px-4">
                                 <div className="flex items-center gap-3">
-                                    <Avatar className="h-7 w-7 bg-white rounded-full border border-gray-600 shadow-sm flex-shrink-0 overflow-hidden">
+                                    <Avatar className="h-7 w-7 bg-white rounded-full border border-gray-600 shadow-sm shrink-0 overflow-hidden">
                                         <AvatarImage src={profile?.logo} alt={item.symbol} className="object-contain" />
                                         <AvatarFallback className="bg-gray-700 text-[9px] font-bold text-gray-200">
                                             {item.symbol.substring(0, 2)}
                                         </AvatarFallback>
                                     </Avatar>
-                                    <span className="text-gray-400 max-w-[180px] truncate" title={item.company}>
+                                    <span className="text-gray-400 max-w-45 truncate" title={item.company}>
                                             {item.company}
                                         </span>
                                 </div>
