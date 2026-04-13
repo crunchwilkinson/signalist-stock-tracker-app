@@ -7,7 +7,7 @@ import {
     COMPANY_PROFILE_WIDGET_CONFIG,
     COMPANY_FINANCIALS_WIDGET_CONFIG,
 } from "@/lib/constants";
-import WatchListButtonWrapper from "@/components/WatchListButtonWrapper";
+import WatchlistButton from "@/components/WatchlistButton";
 
 export default async function StockDetails({ params }: StockDetailsPageProps) {
     const { symbol } = await params;
@@ -40,7 +40,10 @@ export default async function StockDetails({ params }: StockDetailsPageProps) {
                 {/* Right column */}
                 <div className="flex flex-col gap-6">
                     <div className="flex items-center justify-between">
-                        <WatchListButtonWrapper symbol={symbol.toUpperCase()} company={symbol.toUpperCase()} />
+                        <WatchlistButton
+                            symbol={symbol.toUpperCase()}
+                            company={symbol.toUpperCase()}
+                        />
                     </div>
                     <TradingViewWidget
                         scriptUrl={`${scriptUrl}technical-analysis.js`}

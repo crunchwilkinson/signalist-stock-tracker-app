@@ -7,6 +7,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -16,13 +17,20 @@ import {signOut} from "@/lib/actions/auth.actions";
 
 const UserDropDown = ({user, initialStocks}: {user:User, initialStocks:Stock[]}) => {
     const router = useRouter();
+    const [isOpen, setIsOpen] = useState(false); // Add state for dropdown
+
     const handleSignOut = async () => {
         await signOut();
         router.push('/sign-in');
+        setIsOpen(false);
+    }
+
+    const closeDropdown = () => {
+        setIsOpen(false);
     }
 
     return (
-        <DropdownMenu>
+        <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center gap-3 text-gray-4 hover:text-yellow-500">
                     <Avatar className="h-8 w-8">
@@ -56,14 +64,18 @@ const UserDropDown = ({user, initialStocks}: {user:User, initialStocks:Stock[]})
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-gray-600" />
+                <nav className="sm:hidden mb-2">
+                    <NavItems
+                        initialStocks={initialStocks}
+                        isMobile={true} // Pass the new props
+                        onItemClick={closeDropdown}
+                    />
+                </nav>
+                <DropdownMenuSeparator className="hidden sm:block bg-gray-600" />
                 <DropdownMenuItem onClick={handleSignOut} className="text-gray-100 text-md font-medium focus:bg-transparent focus:text-yellow-500 transition-colors cursor-pointer">
                     <LogOut className="h-4 w-4 mr-2 hidden sm:block" />
                     Logout
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="hidden sm:block bg-gray-600" />
-                <nav className="sm:hidden">
-                    <NavItems initialStocks={initialStocks}/>
-                </nav>
             </DropdownMenuContent>
         </DropdownMenu>
     )
